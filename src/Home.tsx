@@ -20,28 +20,58 @@ export const Home = () => {
         }
     }, [currentUser])
 
-    let hunts = []
+    let hunts:Array<HuntModel> = []
 
-    const { loading, error, data } = useSubscription(huntsFeedSubsciption, {});
+    const [huntsViewModel,setHuntsViewModel] = useState([])
 
-    if (!loading && !error) {
-        
-        hunts = data.hunts.map((hunt) => {
+    const { loading, error, data } = useSubscription(huntsFeedSubsciption, {onSubscriptionData:(data)=>updateModel(data)});
 
-            if (hunt && hunt.id && hunt.user) { 
-                let huntModel: HuntModel = hunt
-                huntModel.upvoteCount = hunt.upvotes.aggregate.count || 0
-                huntModel.downvoteCount = hunt.downvotes.aggregate.count || 0
-                huntModel.user_handle = hunt.user.handle
-                huntModel.user_id = userId
-                huntModel.upvotes = hunt.upvotes.nodes.map(user => { return user.user_id }) || []
-                huntModel.downvotes = hunt.downvotes.nodes.map(user => { return user.user_id }) || []
-                return huntModel
+    const updateModel = (data) => {
+
+        // avoid mutations - update data only where it's changed
+        // 1 -> implement concat
+        // 2 -> selectively update
+
+        let updatedHuntsDataModel = data.subscriptionData.data.hunts
+
+        let updateHuntsViewModel:Array<HuntModel> = updatedHuntsDataModel.map((hunt) => {
+            if (hunt && hunt.id && hunt.user) {
+                let huntViewModel: HuntModel = hunt
+                huntViewModel.upvoteCount = hunt.upvotes.aggregate.count || 0
+                huntViewModel.downvoteCount = hunt.downvotes.aggregate.count || 0
+                huntViewModel.user_handle = hunt.user.handle
+                huntViewModel.user_id = userId
+                huntViewModel.upvotes = hunt.upvotes.nodes.map(user => { return user.user_id }) || []
+                huntViewModel.downvotes = hunt.downvotes.nodes.map(user => { return user.user_id }) || []
+                return huntViewModel
+            } else {
+                return null
             }
-            return []
         })
-
+        
+        
+        setHuntsViewModel (updateHuntsViewModel)
+            //if not exists in updated array, remove
     }
+
+    // if (!loading && !error) {
+
+    //     hunts = data.hunts.map((hunt) => {
+
+    //         if (hunt && hunt.id && hunt.user) { 
+    //             let huntModel: HuntModel = hunt
+    //             huntModel.upvoteCount = hunt.upvotes.aggregate.count || 0
+    //             huntModel.downvoteCount = hunt.downvotes.aggregate.count || 0
+    //             huntModel.user_handle = hunt.user.handle
+    //             huntModel.user_id = userId
+    //             huntModel.upvotes = hunt.upvotes.nodes.map(user => { return user.user_id }) || []
+    //             huntModel.downvotes = hunt.downvotes.nodes.map(user => { return user.user_id }) || []
+    //             return huntModel
+    //         }
+    //         return []
+    //     })
+        
+    // }
 
 
     return (
@@ -60,7 +90,7 @@ export const Home = () => {
                         {currentUser && 
                             <NavbarContainer/>
                         }
-                    <HuntList hunts={hunts}/>
+                    <HuntList hunts={huntsViewModel}/>
                     </Col>
             </Row>
         </Container>

@@ -22,10 +22,8 @@ export const HuntList: FunctionComponent<props> = ({ hunts }) => {
     })
 
     let huntListUI
-    console.log(hunts)
 
     if (hunts.length > 0) {
-        console.log('go')
         huntListUI = hunts.map((hunt) => {
             return <HuntListItem key={hunt.id} hunt={hunt} creatorHandle={hunt.user_handle} userId={hunt.user_id}/>
         });

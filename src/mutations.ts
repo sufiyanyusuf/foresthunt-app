@@ -35,7 +35,10 @@ export const AddHunt = gql`
 export const EditBio = gql`
   mutation editBio($id:String!, $bio:String!) {
     update_users(where: {id: {_eq: $id}}, _set: {bio: $bio}) {
-      affected_rows
+      returning{
+        id,
+        bio
+      }
     }
   }
 `;
@@ -54,7 +57,9 @@ export const Upvote = gql`
     objects: {hunt_id:$hunt_id,upvote:true,downvote:false}, 
     on_conflict: {constraint:allow_single_votes, update_columns:[upvote,downvote]}
   ) {
-    affected_rows
+    returning{
+      id
+    }
   }
 }
 `;
@@ -65,7 +70,9 @@ export const Downvote = gql`
     objects: {hunt_id:$hunt_id,upvote:false,downvote:true}, 
     on_conflict: {constraint:allow_single_votes, update_columns:[upvote,downvote]}
   ) {
-    affected_rows
+    returning{
+      id
+    }
   }
 }
 `;
@@ -76,7 +83,9 @@ export const Unvote = gql`
     objects: {hunt_id:$hunt_id,upvote:false,downvote:false}, 
     on_conflict: {constraint:allow_single_votes, update_columns:[upvote,downvote]}
   ) {
-    affected_rows
+    returning{
+      id
+    }
   }
 }
 `;
