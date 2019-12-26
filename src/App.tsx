@@ -1,26 +1,73 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { InMemoryCache } from "apollo-cache-inmemory";
+import ApolloClient from "apollo-client";
+import { split } from "apollo-link";
+import { HttpLink } from "apollo-link-http";
+import { WebSocketLink } from "apollo-link-ws";
+import { getMainDefinition } from "apollo-utilities";
+import React, { useState, useEffect} from "react";
+import { ApolloProvider} from "react-apollo";
+import { AuthState } from "./types";
+import Home from "./Home";
 
-const App: React.FC = () => {
+export default function App({ authState }: { authState: AuthState }) {
+  
+  const isIn = authState.status === "in";
+  const [token, setToken] = useState(authState.token)
+
+  useEffect(() => {
+    if (authState.token) {
+      setToken(authState.token)
+    }
+  }, [authState])
+
+
+  let headers = (isIn ? { Authorization: `Bearer ${token}` } : {})  
+ 
+  let wsLink = new WebSocketLink({
+    uri: "ws://46.101.160.99/v1/graphql",
+    options: {
+      reconnect: true,
+      connectionParams: {
+        headers
+      }
+    }
+  })
+  
+  let httpLink = new HttpLink({
+    uri: "http://46.101.160.99/v1/graphql",
+    headers
+  })
+
+  let link = split(
+    ({ query }) => {
+      let definition = getMainDefinition(query);
+      return definition.kind === 'OperationDefinition' && definition.operation === 'subscription';
+    },
+    wsLink,
+    httpLink
+  )
+  
+
+  let client = new ApolloClient({
+    link,
+    cache: new InMemoryCache()
+  })
+  
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      {/* <Auth/> */}
+      
+      {client &&
+        <ApolloProvider client={client}>
+        <Home/>
+        </ApolloProvider>
+      }
+      
+      
     </div>
-  );
-}
 
-export default App;
+  );
+
+
+}
