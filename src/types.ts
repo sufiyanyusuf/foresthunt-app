@@ -7,19 +7,20 @@ export type AuthState = {
 }
 
 export type HuntModel = {
-        id?:number,
-        user_id?:string,
-        timestamp?:string,
-        title:string,
+        id?: number,
+        user_id?: string,
+        timestamp?: string,
+        title: string,
         link: string,
         price: number,
-        currency:string,
+        currency: string,
         tags?: Array<string>
         upvotes?: Array<string>,
-        downvotes?:Array<string>,
-        views?:number,
-        upvoteCount?:number,
-        downvoteCount?: number
+        downvotes?: Array<string>,
+        views?: number,
+        upvoteCount?: number,
+        downvoteCount?: number,
+        user_handle?: string
 }
 
 export type ProfileModel = {
