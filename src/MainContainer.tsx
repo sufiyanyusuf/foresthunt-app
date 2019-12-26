@@ -55,7 +55,7 @@ export const MainContainer = (hunts) => {
                 </Row>
             </NavContainer>
             }
-            <HuntList hunts={convertToViewModel(hunts)} userId={userId} />
+            <HuntList hunts={convertToViewModel(hunts)} />
         </div>
     )
 }

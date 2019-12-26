@@ -32,6 +32,14 @@ export const AddHunt = gql`
   }
 `;
 
+export const EditBio = gql`
+  mutation editBio($id:String!, $bio:String!) {
+    update_users(where: {id: {_eq: $id}}, _set: {bio: $bio}) {
+      affected_rows
+    }
+  }
+`;
+
 export const RemoveHunt = gql`
   mutation removeHunt($id: Int!) {
     delete_hunts(where: {id: {_eq: $id}}) {

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React from "react";
 import styled from 'styled-components';
 import firebase from "firebase/app";
 import twitter_icon from '../assets/twitter-icon.svg'

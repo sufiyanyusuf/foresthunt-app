@@ -1,8 +1,9 @@
-import React,{FunctionComponent} from "react";
+import React,{FunctionComponent,useState} from "react";
 import { ProfileModel } from '../types'
 import { useQuery} from '@apollo/react-hooks';
 import { UserProfileQuery } from '../queries';
 import styled from 'styled-components';
+import { EditBioSheet } from '../EditBioSheet'
 
 type props = {
     signOut:()=>any,
@@ -12,7 +13,12 @@ type props = {
 export const ProfileFragment: FunctionComponent<props> = ({ userId, signOut }) => {
 
     let profile: ProfileModel;
-    
+
+    const [showEditBioSheet, setShowEditBioSheet] = useState(false)
+
+    const hideEditBioSheet = () => { 
+        setShowEditBioSheet(false)
+    }
 
     const { loading, error, data } = useQuery(UserProfileQuery, {
         variables: { user_id: userId },
@@ -38,6 +44,7 @@ export const ProfileFragment: FunctionComponent<props> = ({ userId, signOut }) =
             { userId && profile &&
                 <ProfileContainer>
                     
+                <EditBioSheet show={showEditBioSheet} close={hideEditBioSheet} userId={userId}/>
                     <ProfilePicture src={profile.profilePicUrl} />
                     
                     <Title>
@@ -50,7 +57,7 @@ export const ProfileFragment: FunctionComponent<props> = ({ userId, signOut }) =
                     
                     <Bio>
                         {profile.bio}
-                        <Cta>Edit</Cta>
+                        <Cta onClick={() => setShowEditBioSheet(true)}>Edit</Cta>
                     </Bio>
 
                 

@@ -1,4 +1,4 @@
-import React,{useState,useEffect,FunctionComponent} from "react";
+import React,{FunctionComponent} from "react";
 import { HuntModel } from './types'
 import styled from 'styled-components';
 import { HuntListItem } from './components/HuntListItem'
@@ -7,10 +7,9 @@ import {Container} from "react-bootstrap";
 
 type props = {
     hunts: Array<HuntModel>
-    userId: string
 }
 
-export const HuntList: FunctionComponent<props> = ({ hunts,userId }) => {
+export const HuntList: FunctionComponent<props> = ({ hunts }) => {
   
     useScrollPosition(({ prevPos, currPos }) => {
     
@@ -28,7 +27,7 @@ export const HuntList: FunctionComponent<props> = ({ hunts,userId }) => {
     if (hunts.length > 0) {
         console.log('go')
         huntListUI = hunts.map((hunt) => {
-            return <HuntListItem key={hunt.id} hunt={hunt} creatorHandle={hunt.user_handle} userId={userId || ""}/>
+            return <HuntListItem key={hunt.id} hunt={hunt} creatorHandle={hunt.user_handle} userId={hunt.user_id}/>
         });
     } 
 

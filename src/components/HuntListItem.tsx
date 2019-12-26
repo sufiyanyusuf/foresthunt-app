@@ -8,7 +8,6 @@ import downvoted_icon from '../assets/downvoted_icon.svg'
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import useConstant from 'use-constant'
 import {Container, Row, Col} from "react-bootstrap";
-import { votesSubscription } from "../subscriptions";
 
 import moment from "moment";
 import {useMutation } from '@apollo/react-hooks';

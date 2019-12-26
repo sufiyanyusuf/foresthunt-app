@@ -7,7 +7,7 @@ import { getMainDefinition } from "apollo-utilities";
 import React, { useState, useEffect} from "react";
 import { ApolloProvider} from "react-apollo";
 import { AuthState } from "./types";
-import Home from "./Home";
+import { Home } from "./Home";
 
 export default function App({ authState }: { authState: AuthState }) {
   
