@@ -14,9 +14,7 @@ import {useMutation } from '@apollo/react-hooks';
 import { Downvote, Upvote, Unvote, TrackClicks } from "../mutations";
 
 type props = {
-    hunt: HuntModel,
-    creatorHandle: string
-    userId:string
+    hunt: HuntModel
 }
 
 type VoteState = {
@@ -25,15 +23,16 @@ type VoteState = {
     unvote?:boolean
 }
 
-export const HuntListItem: FunctionComponent<props> = ({hunt,creatorHandle,userId})  => { 
+export const HuntListItem: FunctionComponent<props> = ({hunt})  => { 
+
 
     const [upvote] = useMutation(Upvote)
     const [downvote] = useMutation(Downvote)
     const [unvote] = useMutation(Unvote)
     const [trackClick] = useMutation(TrackClicks)
 
-    const [didUpvote,setDidUpvote] = useState<boolean>((hunt.upvotes.includes(userId)))
-    const [didDownvote, setDidDownvote] = useState<boolean>((hunt.downvotes.includes(userId)))
+    const [didUpvote,setDidUpvote] = useState<boolean>((hunt.upvotes.includes(hunt.user_id)))
+    const [didDownvote, setDidDownvote] = useState<boolean>((hunt.downvotes.includes(hunt.user_id)))
     
     const [upvoteCount,setUpvoteCount] = useState(hunt.upvoteCount || 0)
     const [downvoteCount,setDownvoteCount] = useState(hunt.downvoteCount || 0)
@@ -165,7 +164,7 @@ export const HuntListItem: FunctionComponent<props> = ({hunt,creatorHandle,userI
                     <Col md={2} xs={4} sm-hidden>
                         <Row>
                             <div style={{ paddingRight: 10}}>
-                                <CreatorLabel>By <b>{creatorHandle}</b></CreatorLabel> 
+                                <CreatorLabel>By <b>{hunt.user_handle}</b></CreatorLabel> 
                                 <TimestampLabel>{moment(hunt.timestamp).fromNow()}</TimestampLabel>
                             </div>
                         </Row>

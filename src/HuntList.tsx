@@ -25,7 +25,7 @@ export const HuntList: FunctionComponent<props> = ({ hunts }) => {
 
     if (hunts.length > 0) {
         huntListUI = hunts.map((hunt) => {
-            return <HuntListItem key={hunt.id} hunt={hunt} creatorHandle={hunt.user_handle} userId={hunt.user_id}/>
+            return <HuntListItem key={hunt.id} hunt={hunt}/>
         });
     } 
 
