@@ -1,5 +1,5 @@
-import React, {FunctionComponent} from "react";
-import { UserHuntListItem } from "../components/UserHuntListItem";
+import React, {FunctionComponent, useState} from "react";
+import  UserHuntListItem  from "../components/UserHuntListItem";
 import { useSubscription, useMutation } from '@apollo/react-hooks';
 import { userHuntsSubscription } from "../subscriptions";
 import { HuntModel } from '../types'
@@ -27,36 +27,34 @@ export const UserHuntList: FunctionComponent<props> = ({ userId }) => {
         }
     }
 
-    const { loading, error, data } = useSubscription(userHuntsSubscription, {
-        variables: { user_id: userId },
+    useSubscription(userHuntsSubscription, {
+        variables: { user_id: userId }, onSubscriptionData:(data)=>updateModel(data)
     });
 
-    let userHunts: Array<HuntModel>;
-    let huntListUI;
+    const [userHunts,setUserHunts] = useState([])
 
-    if (!loading && !error) {
-        userHunts = data.hunts.map (hunt => {
-                let huntModel: HuntModel = {
-                    id: hunt.id,
-                    currency: hunt.currency,
-                    user_id: hunt.user_id,
-                    price: hunt.price,
-                    title: hunt.title,
-                    tags: hunt.tags,
-                    link: hunt.link,
-                    views: hunt.views,
-                    timestamp:hunt.timestamp,
-                    upvoteCount: hunt.upvotes.aggregate.count,
-                    downvoteCount: hunt.downvotes.aggregate.count, 
-                }
-                return huntModel
+    const updateModel = (_data) => {
+        let data = _data.subscriptionData.data.hunts
+        let _userHunts = data.map(hunt => {
+            let huntModel: HuntModel = {
+                id: hunt.id,
+                currency: hunt.currency,
+                user_id: hunt.user_id,
+                price: hunt.price,
+                title: hunt.title,
+                tags: hunt.tags,
+                link: hunt.link,
+                views: hunt.views,
+                timestamp: hunt.timestamp,
+                upvoteCount: hunt.upvotes.aggregate.count,
+                downvoteCount: hunt.downvotes.aggregate.count,
             }
-        )
-
-        huntListUI = userHunts.map((hunt:HuntModel) => 
-            <UserHuntListItem key={hunt.id} hunt={hunt} remove={remove}/> 
-        );
+            return huntModel
+        })
+        setUserHunts(_userHunts)
+        
     }
+    
 
     
 
@@ -64,7 +62,9 @@ export const UserHuntList: FunctionComponent<props> = ({ userId }) => {
         <div style = {{paddingBottom:40}}>
             <React.Fragment>
                 <UserHuntListContainer>
-                    {huntListUI}
+                    {userHunts.map((hunt: HuntModel) => {
+                        return <UserHuntListItem key={hunt.id} hunt={hunt} remove={remove} />
+                    })}
                 </UserHuntListContainer>
             </React.Fragment>
         </div>

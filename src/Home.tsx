@@ -1,4 +1,4 @@
-import React,{useState,useEffect} from "react";
+import React,{useState,useEffect, useMemo} from "react";
 import styled from 'styled-components';
 import { HuntModel } from './types'
 import { Sidebar } from './components/Sidebar'
@@ -12,47 +12,7 @@ import { HuntList } from './HuntList'
 export const Home = () => { 
 
     let currentUser = firebase.auth().currentUser
-    const [userId, setUserId] = useState()
    
-    useEffect(() => {
-        if (currentUser) {
-            setUserId(currentUser.uid)
-        }
-    }, [currentUser])
-
-    let hunts:Array<HuntModel> = []
-
-    const [huntsViewModel,setHuntsViewModel] = useState([])
-
-    const { loading, error, data } = useSubscription(huntsFeedSubsciption, {onSubscriptionData:(data)=>updateModel(data)});
-
-    const updateModel = (data) => {
-
-        // avoid mutations - update data only where it's changed
-        // 1 -> implement concat
-        // 2 -> selectively update
-
-        let updatedHuntsDataModel = data.subscriptionData.data.hunts
-
-        let updateHuntsViewModel:Array<HuntModel> = updatedHuntsDataModel.map((hunt) => {
-            if (hunt && hunt.id && hunt.user) {
-                let huntViewModel: HuntModel = hunt
-                huntViewModel.upvoteCount = hunt.upvotes.aggregate.count || 0
-                huntViewModel.downvoteCount = hunt.downvotes.aggregate.count || 0
-                huntViewModel.user_handle = hunt.user.handle
-                huntViewModel.user_id = userId
-                huntViewModel.upvotes = hunt.upvotes.nodes.map(user => { return user.user_id }) || []
-                huntViewModel.downvotes = hunt.downvotes.nodes.map(user => { return user.user_id }) || []
-                return huntViewModel
-            } else {
-                return null
-            }
-        })
-        
-        
-        setHuntsViewModel (updateHuntsViewModel)
-            //if not exists in updated array, remove
-    }
 
     // if (!loading && !error) {
 
@@ -90,7 +50,7 @@ export const Home = () => {
                         {currentUser && 
                             <NavbarContainer/>
                         }
-                    <HuntList hunts={huntsViewModel}/>
+                    <HuntList/>
                     </Col>
             </Row>
         </Container>

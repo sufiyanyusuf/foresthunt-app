@@ -6,12 +6,9 @@ import upvote_icon from '../assets/upvote_icon.svg'
 import downvote_icon from '../assets/downvote_icon.svg'
 import moment from "moment";
 
-type props = {
-    remove:(hunt:HuntModel)=>any,
-    hunt:HuntModel
-}
 
-export const UserHuntListItem : FunctionComponent<props>= ({hunt,remove}) => { 
+
+const UserHuntListItem = ({hunt,remove}:{hunt:HuntModel, remove:(hunt:HuntModel)=>any}) => { 
 
     return (
         <StyledRow>
@@ -35,6 +32,19 @@ export const UserHuntListItem : FunctionComponent<props>= ({hunt,remove}) => {
     )
 
 }
+
+const areEqual = (prevProps, nextProps) => {
+   
+    if (JSON.stringify(prevProps) === JSON.stringify(nextProps)) {
+        return true
+    } else {
+        return false
+    }
+
+};
+
+export default React.memo(UserHuntListItem, areEqual);
+
 
 const PriceLabel = styled.span`
     font-weight:900;

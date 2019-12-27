@@ -23,8 +23,7 @@ type VoteState = {
     unvote?:boolean
 }
 
-export const HuntListItem: FunctionComponent<props> = ({hunt})  => { 
-
+const HuntListItem = ({hunt}:{hunt:HuntModel})  => { 
 
     const [upvote] = useMutation(Upvote)
     const [downvote] = useMutation(Downvote)
@@ -161,7 +160,7 @@ export const HuntListItem: FunctionComponent<props> = ({hunt})  => {
                         </Row>
                     </Col>
 
-                    <Col md={2} xs={4} sm-hidden>
+                    <Col md={2} xs={4}>
                         <Row>
                             <div style={{ paddingRight: 10}}>
                                 <CreatorLabel>By <b>{hunt.user_handle}</b></CreatorLabel> 
@@ -175,6 +174,16 @@ export const HuntListItem: FunctionComponent<props> = ({hunt})  => {
     )
 
 }
+
+const areEqual = (prevProps, nextProps) => {
+    if (JSON.stringify(prevProps) === JSON.stringify(nextProps)) {
+        return true
+    } else {
+        return false
+    }
+};
+
+export default React.memo(HuntListItem, areEqual);
 
 
 const VoteButton = styled.div`

@@ -1,16 +1,57 @@
-import React,{FunctionComponent} from "react";
+import React,{FunctionComponent,useMemo,useState,useEffect} from "react";
 import { HuntModel } from './types'
 import styled from 'styled-components';
-import { HuntListItem } from './components/HuntListItem'
+import HuntListItem from './components/HuntListItem'
 import { useScrollPosition } from '@n8tb1t/use-scroll-position'
 import {Container} from "react-bootstrap";
+import { useSubscription } from '@apollo/react-hooks';
+import { huntsFeedSubsciption } from "./subscriptions";
+import firebase from "firebase/app";
 
-type props = {
-    hunts: Array<HuntModel>
-}
 
-export const HuntList: FunctionComponent<props> = ({ hunts }) => {
+
+export const HuntList: FunctionComponent = React.memo(() => {
   
+    let currentUser = firebase.auth().currentUser
+    const [userId, setUserId] = useState()
+   
+    useEffect(() => {
+        if (currentUser) {
+            setUserId(currentUser.uid)
+        }
+    }, [currentUser])
+
+
+    useSubscription(huntsFeedSubsciption, {onSubscriptionData:(data)=>updateModel(data)});
+
+    const [huntsViewModel,setHuntsViewModel] = useState([])
+    
+
+    const updateModel = (data) => {
+
+        // avoid mutations - update data only where it's changed
+        // 1 -> implement concat
+        // 2 -> selectively update
+
+        let updatedHuntsDataModel = data.subscriptionData.data.hunts
+
+        let updatedHuntsViewModel:Array<HuntModel> = updatedHuntsDataModel.map((hunt) => {
+           
+            let huntViewModel: HuntModel = hunt
+            huntViewModel.upvoteCount = hunt.upvotes.aggregate.count || 0
+            huntViewModel.downvoteCount = hunt.downvotes.aggregate.count || 0
+            huntViewModel.user_handle = hunt.user.handle
+            huntViewModel.user_id = userId
+            huntViewModel.upvotes = hunt.upvotes.nodes.map(user => { return user.user_id }) || []
+            huntViewModel.downvotes = hunt.downvotes.nodes.map(user => { return user.user_id }) || []
+            return huntViewModel
+            
+        })
+
+        setHuntsViewModel(updatedHuntsViewModel)
+    }
+
+
     useScrollPosition(({ prevPos, currPos }) => {
     
         const list = document.getElementById('huntList')
@@ -20,14 +61,6 @@ export const HuntList: FunctionComponent<props> = ({ hunts }) => {
         }
 
     })
-
-    let huntListUI
-
-    if (hunts.length > 0) {
-        huntListUI = hunts.map((hunt) => {
-            return <HuntListItem key={hunt.id} hunt={hunt}/>
-        });
-    } 
 
     const HuntListContainer = styled.ul`
         padding-top:80px;
@@ -50,11 +83,13 @@ export const HuntList: FunctionComponent<props> = ({ hunts }) => {
             <HomeContainer>
                 <React.Fragment>
                     <HuntListContainer id="huntList">
-                        {huntListUI}
+                        {huntsViewModel.map((hunt,i) => { 
+                            return <HuntListItem hunt={hunt} key={hunt.id}/>
+                        })}
                     </HuntListContainer>
                 </React.Fragment>
             </HomeContainer>
         </Container>
     );
     
-}
+})
