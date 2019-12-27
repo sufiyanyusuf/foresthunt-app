@@ -1,12 +1,8 @@
-import React, { FunctionComponent} from "react";
+import React from "react";
 import styled from 'styled-components';
 import { HuntModel } from '../types'
 import  remove_icon  from "../assets/remove_icon.svg";
-import upvote_icon from '../assets/upvote_icon.svg'
-import downvote_icon from '../assets/downvote_icon.svg'
 import moment from "moment";
-
-
 
 const UserHuntListItem = ({hunt,remove}:{hunt:HuntModel, remove:(hunt:HuntModel)=>any}) => { 
 

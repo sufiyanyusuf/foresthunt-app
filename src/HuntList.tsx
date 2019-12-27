@@ -29,10 +29,6 @@ export const HuntList: FunctionComponent = React.memo(() => {
 
     const updateModel = (data) => {
 
-        // avoid mutations - update data only where it's changed
-        // 1 -> implement concat
-        // 2 -> selectively update
-
         let updatedHuntsDataModel = data.subscriptionData.data.hunts
 
         let updatedHuntsViewModel:Array<HuntModel> = updatedHuntsDataModel.map((hunt) => {

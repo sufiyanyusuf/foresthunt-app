@@ -1,4 +1,4 @@
-import React, { FunctionComponent, useState} from "react";
+import React, { useState} from "react";
 import styled from 'styled-components';
 import { HuntModel } from '../types'
 import upvote_icon from '../assets/upvote_icon.svg'

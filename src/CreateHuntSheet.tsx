@@ -4,6 +4,7 @@ import styled from 'styled-components';
 import { HuntModel } from "./types";
 import { useMutation } from '@apollo/react-hooks';
 import { AddHunt } from "./mutations";
+import bear from './assets/bear.svg'
 
 type Props = {
     close:()=>any,
@@ -56,52 +57,54 @@ export const CreateHuntSheet: FunctionComponent<Props> = ({ close, show }) => {
             >
                 <Modal.Body>
                     <ModalContainer>
-                        
                         <Row>
-                            <Col>
-                                <Row>
-                                    <Col><Title>Share Your Hunt</Title></Col>
-                                </Row>
-                                
-                                <Row style={{paddingTop:80}}>
-                                    <Col>
-                                        <Form.Label>Link/URL</Form.Label>
-                                        <Form.Control placeholder="https://www.amazon.ae/dp/B07Y3L4N12/" ref={linkRef}/>
-                                    </Col>   
-                                </Row>
-                                <Row style={{paddingTop:20}}>
-                                    <Col>
-                                        <Form.Label>Title</Form.Label>
-                                        <Form.Control placeholder="Apple iPhone 11 Pro with FaceTime - 64GB, 4G LTE, Midnight Green" ref={titleRef}/>
-                                    </Col>   
-                                </Row>
-                                <Row style={{paddingTop:20}}>
-                                    <Col>
-                                        <Form.Label>Price</Form.Label>
-                                        <Form.Control placeholder="1299" ref={priceRef}/>
-                                    </Col> 
-                                    <Col lg={4}>
-                                        <Form.Label>Currency</Form.Label>
-                                        <Form.Control placeholder="USD" ref={currencyRef}/>
-                                    </Col> 
-                                </Row>
-                                <Row style={{paddingTop:20}}>
-                                    <Col>
-                                        <Form.Label>Tags (seperated by commas)</Form.Label>
-                                        <Form.Control placeholder="apple, iphone11pro, discount" ref={tagsRef}/>
-                                    </Col>   
-                                </Row>
-
-                                <Row style={{paddingTop:40}}>
-                                    <Col>
-                                        <ShareHuntCta onClick={submit}>Create & Share Hunt</ShareHuntCta>
-                                        <CancelCta onClick={close}>Cancel</CancelCta>
-                                    </Col>
-                                </Row>
-                            </Col>
-                                
+                            <Col><Title>Share Your Hunt</Title></Col>
                         </Row>
+                        <Row>
+                            <Col md={true} xs={12}>
+                               
+                               <Row style={{paddingTop:80}}>
+                                   <Col>
+                                       <Form.Label>Link/URL</Form.Label>
+                                       <Form.Control placeholder="https://www.amazon.ae/dp/B07Y3L4N12/" ref={linkRef}/>
+                                   </Col>   
+                               </Row>
+                               <Row style={{paddingTop:20}}>
+                                   <Col>
+                                       <Form.Label>Title</Form.Label>
+                                       <Form.Control placeholder="Apple iPhone 11 Pro with FaceTime - 64GB, 4G LTE, Midnight Green" ref={titleRef}/>
+                                   </Col>   
+                               </Row>
+                               <Row style={{paddingTop:20}}>
+                                   <Col>
+                                       <Form.Label>Price</Form.Label>
+                                       <Form.Control placeholder="1299" ref={priceRef}/>
+                                   </Col> 
+                                   <Col lg={4}>
+                                       <Form.Label>Currency</Form.Label>
+                                       <Form.Control placeholder="USD" ref={currencyRef}/>
+                                   </Col> 
+                               </Row>
+                               <Row style={{paddingTop:20}}>
+                                   <Col>
+                                       <Form.Label>Tags (seperated by commas)</Form.Label>
+                                       <Form.Control placeholder="apple, iphone11pro, discount" ref={tagsRef}/>
+                                   </Col>   
+                               </Row>
+
+                               
+                           </Col>
+                            <Col md={{ span: 4, offset: 1 }} className="d-none d-lg-block">
+                                <BearGraphic src={bear}/>
+                            </Col> 
                             
+                        </Row>
+                        <Row style={{paddingTop:40}}>
+                            <Col>
+                                <ShareHuntCta onClick={submit}>Create & Share Hunt</ShareHuntCta>
+                                <CancelCta onClick={close}>Cancel</CancelCta>
+                            </Col>
+                        </Row>  
 
                     </ModalContainer>
                 </Modal.Body>
@@ -112,12 +115,19 @@ export const CreateHuntSheet: FunctionComponent<Props> = ({ close, show }) => {
   );
 }
 
+const BearGraphic = styled.img`
+    width:100%;
+    position:absolute;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+`;
 
 const ModalContainer = styled.div`
-    padding-top:40px;
+    padding-top:60px;
     padding-left:80px;
-    padding-right:120px;
-    padding-bottom:40px;
+    padding-right:80px;
+    padding-bottom:60px;
     font-family: 'IBM Plex Sans', sans-serif;
 
     input::-webkit-input-placeholder {
