@@ -71,16 +71,21 @@ const Container = styled.div`
 `;
 
 const StyledRow = styled.div`
-    padding-top:10px;
-    padding-bottom:9px;
-    background-color: #FFFFFF;
+    padding-top:20px;
+    padding-bottom:20px;
+    padding-right:20px;
+    padding-left:20px;
     transition: 0.2s;
-    border-radius:8px;
-    opacity:0.95;
+    opacity:0.75;
+    background:#FFFFFF;
     :hover{
         cursor:pointer;
         opacity:100;
+        background:#F5F6F7;
+        transition:0.25s ease-out
     }
+    -webkit-transition: 0.25s ease-out;
+    border-bottom: 1px solid #eee;
 `;
 
 
@@ -91,7 +96,7 @@ const TitleLabel = styled.div`
     letter-spacing: 0;
     padding-bottom:4px;
     padding-right:10px;
-    font-weight:500;
+    font-weight:400;
 `;
 
 const LinkLabel = styled.div`

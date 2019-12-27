@@ -6,6 +6,7 @@ import "firebase/auth";
 import "firebase/database";
 import { UserHuntList } from "../components/UserHuntList";
 import { LoggedOut } from '../components/LoggedOut';
+import { Container, Row, Col} from "react-bootstrap";
 
 
 export const Sidebar = () => { 
@@ -35,8 +36,7 @@ export const Sidebar = () => {
     };
 
     return (
-        <Container>
-
+        <RootContainer>
             {!currentUser &&
                 <LoggedOut/>
             }
@@ -47,16 +47,15 @@ export const Sidebar = () => {
                     <UserHuntList userId={userId}/>
                 </div>
             }
+        </RootContainer>
 
-
-        </Container>
     )
 
     
 }
 
 
-const Container = styled.div`
+const RootContainer = styled.div`
     display: -webkit-flex;
     display: flex;
     -webkit-flex-direction: column;

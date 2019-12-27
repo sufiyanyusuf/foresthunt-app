@@ -41,7 +41,7 @@ export const CreateHuntSheet: FunctionComponent<Props> = ({ close, show }) => {
                     tags: hunt.tags
                 }
             })
-            close()
+            // close()
         } catch (error) {
             console.log(error,data)
         }

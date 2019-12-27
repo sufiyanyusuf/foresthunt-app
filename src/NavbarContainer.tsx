@@ -29,10 +29,6 @@ const NavContainer = styled.div`
     position: -webkit-sticky; /* Safari */
     position: sticky;
     height:80px;
-    margin-left:-15px;
-    margin-right:-15px;
-    padding-left:25px;
-    padding-right:25px;
     
 `;
 
@@ -66,6 +62,7 @@ outline:none;
 -webkit-transition: 0.25s ease-out;
 font-weight:600;
 margin-top:20px;
+margin-right:20px;
 `;
 
 

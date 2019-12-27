@@ -14,25 +14,27 @@ export const HuntList: FunctionComponent = React.memo(() => {
   
     let currentUser = firebase.auth().currentUser
     const [userId, setUserId] = useState()
-   
+    const [cursor, setCursor] = useState(100000000)
+
     useEffect(() => {
         if (currentUser) {
             setUserId(currentUser.uid)
         }
     }, [currentUser])
 
-
-    useSubscription(huntsFeedSubsciption, {onSubscriptionData:(data)=>updateModel(data)});
+    useSubscription(huntsFeedSubsciption, {variables: { cursor: cursor }, onSubscriptionData:(data)=>updateModel(data)});
 
     const [huntsViewModel,setHuntsViewModel] = useState([])
     
+    const _subscribeToNewLinks = async () => {
+        // ... you'll implement this 🔜
+      }
 
     const updateModel = (data) => {
 
         let updatedHuntsDataModel = data.subscriptionData.data.hunts
 
         let updatedHuntsViewModel:Array<HuntModel> = updatedHuntsDataModel.map((hunt) => {
-           
             let huntViewModel: HuntModel = hunt
             huntViewModel.upvoteCount = hunt.upvotes.aggregate.count || 0
             huntViewModel.downvoteCount = hunt.downvotes.aggregate.count || 0
@@ -40,11 +42,14 @@ export const HuntList: FunctionComponent = React.memo(() => {
             huntViewModel.user_id = userId
             huntViewModel.upvotes = hunt.upvotes.nodes.map(user => { return user.user_id }) || []
             huntViewModel.downvotes = hunt.downvotes.nodes.map(user => { return user.user_id }) || []
-            return huntViewModel
-            
+            return huntViewModel 
         })
 
-        setHuntsViewModel(updatedHuntsViewModel)
+        //filter updated model to check for equality
+        
+        let newModel = huntsViewModel.concat(updatedHuntsViewModel)
+        
+        setHuntsViewModel(newModel)
     }
 
 
@@ -53,13 +58,17 @@ export const HuntList: FunctionComponent = React.memo(() => {
         const list = document.getElementById('huntList')
         
         if (window.scrollY + window.innerHeight === list.clientHeight + list.offsetTop + 16) {
-            console.log('load more')
+            let lastHunt = huntsViewModel.slice(-1).pop()
+            console.log('load more', lastHunt.id)
+            if (lastHunt) {
+                setCursor(lastHunt.id)
+            }
         }
 
     })
 
     const HuntListContainer = styled.ul`
-        padding-top:80px;
+        padding-top:40px;
         align-items: flex-start;
     `;
     
@@ -80,7 +89,7 @@ export const HuntList: FunctionComponent = React.memo(() => {
                 <React.Fragment>
                     <HuntListContainer id="huntList">
                         {huntsViewModel.map((hunt,i) => { 
-                            return <HuntListItem hunt={hunt} key={hunt.id}/>
+                            return <div>{hunt.id}<HuntListItem hunt={hunt} key={hunt.id}/></div>
                         })}
                     </HuntListContainer>
                 </React.Fragment>

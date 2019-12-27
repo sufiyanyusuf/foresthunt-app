@@ -28,7 +28,7 @@ const signInWithTwitter = async () => {
 export const LoggedOut = () => { 
     return (
         <div>
-            <div>
+            <div  style={{ padding: 30}}>
                 <Title>
                     Hello, Stranger...
                 </Title>

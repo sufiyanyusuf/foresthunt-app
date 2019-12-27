@@ -12,13 +12,15 @@ export const Home = () => {
    
     return (
         
-        <Container fluid>
-            <Row>
-                    <Col md={3} >
-                        <Row className="d-none d-md-block" style={{ position: "sticky", top:1}}>
+        <Container fluid={true} style={{ paddingRight: 0,paddingLeft:0 }}>
+            <Row noGutters={true}>
+                    <Col md={3}>
+                    <Row className="d-none d-md-block" style={{ position: "sticky", top: 1 }}>
+                        <Container fluid={true}>
                             <SidebarContainer>
                                 <Sidebar/>
                             </SidebarContainer>
+                        </Container>
                         </Row>
                     </Col>
                     
@@ -43,8 +45,6 @@ const SidebarContainer = styled.div`
     overflow-x: hidden;
     z-index: 1000;
     display: block;
-    padding-left:20px;
-    padding-right:20px;
 `;
 
 

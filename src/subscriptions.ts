@@ -33,8 +33,8 @@ subscription hunts ($user_id:String) {
 `;
 
 export const huntsFeedSubsciption = gql`
-subscription hunts {
-  hunts (order_by: {timestamp: desc}) {
+subscription hunts ($cursor:Int!){
+  hunts (order_by: {id: desc}, limit: 10, where: {id: {_lt: $cursor}}) {
     id
     timestamp
     currency

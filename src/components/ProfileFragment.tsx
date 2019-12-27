@@ -74,7 +74,7 @@ export const ProfileFragment: FunctionComponent<props> = ({ userId, signOut }) =
 
 const ProfileContainer = styled.div`
 border-bottom: 1px solid #eee;
-margin-bottom:20px;
+padding-left:20px;
 `;
 const Title = styled.div`
 font-size: 32px;
@@ -83,7 +83,7 @@ font-weight:900;
 `;
 
 const Handle = styled.span`
-font-size: 18px;
+font-size: 22px;
 padding-right:10px;
 font-weight:500;
 `;
