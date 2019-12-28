@@ -9,22 +9,28 @@ import { huntsFeedSubsciption } from "./subscriptions";
 import firebase from "firebase/app";
 
 
+type PaginationParams = {
+    cursor: number,
+    limit:number
+}
 
 export const HuntList: FunctionComponent = React.memo(() => {
   
+    
     let currentUser = firebase.auth().currentUser
     const [userId, setUserId] = useState()
     const [cursor, setCursor] = useState(100000000)
     const [huntsViewModel,setHuntsViewModel] = useState(Array<HuntModel>())
-
+    const [paginationParams,setPaginationParams] = useState<PaginationParams>({cursor:100000000,limit:10})
+    
     useEffect(() => {
         if (currentUser) {
             setUserId(currentUser.uid)
         }
     }, [currentUser])
 
-    useSubscription(huntsFeedSubsciption, {variables: { cursor: cursor }, onSubscriptionData:(data)=>updateModel(data)});
-
+    console.log(paginationParams)
+    useSubscription(huntsFeedSubsciption, {variables: {limit:paginationParams.limit, cursor: paginationParams.cursor }, onSubscriptionData:(data)=>updateModel(data)});
 
     const updateModel = (data) => {
 
@@ -41,63 +47,64 @@ export const HuntList: FunctionComponent = React.memo(() => {
             return huntViewModel 
         })
 
-        console.log('outdated',huntsViewModel)
+        // console.log('outdated',huntsViewModel)
         console.log('updatedmodel',updatedHuntsViewModel)
 
         if (updatedHuntsViewModel.length > 0) {
             //for empty model, set updated array
             //model length is 0
 
-            if (huntsViewModel.length === 0) {
-                setHuntsViewModel(updatedHuntsViewModel)
-                return
-            }
+            setHuntsViewModel(updatedHuntsViewModel)
+            // if (huntsViewModel.length === 0) {
+            //     setHuntsViewModel(updatedHuntsViewModel)
+            //     return
+            // }
 
-            //for new results at bottom, concat updated to model
-            //updated first element id is < model last element id
+            // //for new results at bottom, concat updated to model
+            // //updated first element id is < model last element id
 
-            if (updatedHuntsViewModel[0].id < huntsViewModel[huntsViewModel.length - 1].id) {
-                setHuntsViewModel([...huntsViewModel, ...updatedHuntsViewModel])
-                return
-            }
+            // if (updatedHuntsViewModel[0].id < huntsViewModel[huntsViewModel.length - 1].id) {
+            //     setHuntsViewModel([...huntsViewModel, ...updatedHuntsViewModel])
+            //     return
+            // }
             
 
-            //for new results added on top, remove overlapping indices from model, then append to updated results
-            //updated first element id > model first element id
-            if (updatedHuntsViewModel[0].id > huntsViewModel[0].id) {
+            // //for new results added on top, remove overlapping indices from model, then append to updated results
+            // //updated first element id > model first element id
+            // if (updatedHuntsViewModel[0].id > huntsViewModel[0].id) {
 
-                let _huntsViewModel: Array<HuntModel> = huntsViewModel.map(oldModel => {
-                    let newModel = updatedHuntsViewModel.filter(_model => { return _model.id === oldModel.id })
-                    if (newModel.length === 0) {
-                        return oldModel
-                    } else {
-                        return null
-                    }
-                }).filter(Boolean)
+            //     let _huntsViewModel: Array<HuntModel> = huntsViewModel.map(oldModel => {
+            //         let newModel = updatedHuntsViewModel.filter(_model => { return _model.id === oldModel.id })
+            //         if (newModel.length === 0) {
+            //             return oldModel
+            //         } else {
+            //             return null
+            //         }
+            //     }).filter(Boolean)
 
-                setHuntsViewModel(updatedHuntsViewModel.concat(_huntsViewModel))
-                return
-            }
+            //     setHuntsViewModel(updatedHuntsViewModel.concat(_huntsViewModel))
+            //     return
+            // }
 
-            //for updates, map and replace the updated element(s) in array
-            //updated first element id === model first element id
-            if (updatedHuntsViewModel[0].id === huntsViewModel[0].id) {
+            // //for updates, map and replace the updated element(s) in array
+            // //updated first element id === model first element id
+            // if (updatedHuntsViewModel[0].id === huntsViewModel[0].id) {
 
-                let _huntsViewModel: Array<HuntModel> = huntsViewModel.map((oldModel) => {
+            //     let _huntsViewModel: Array<HuntModel> = huntsViewModel.map((oldModel) => {
                     
-                    let newModel = updatedHuntsViewModel.filter(_model => { return _model.id === oldModel.id })
+            //         let newModel = updatedHuntsViewModel.filter(_model => { return _model.id === oldModel.id })
 
-                    if (newModel.length === 1) {
-                        return newModel[0]
-                    } else {
-                        return oldModel
-                    }
+            //         if (newModel.length === 1) {
+            //             return newModel[0]
+            //         } else {
+            //             return oldModel
+            //         }
 
-                })
+            //     })
 
-                setHuntsViewModel(_huntsViewModel)
-                return
-            }
+            //     setHuntsViewModel(_huntsViewModel)
+            //     return
+            // }
         }
 
     }
@@ -106,13 +113,18 @@ export const HuntList: FunctionComponent = React.memo(() => {
     useScrollPosition(({ prevPos, currPos }) => {
     
         const list = document.getElementById('huntList')
-        
+
         if (window.scrollY + window.innerHeight === list.clientHeight + list.offsetTop + 16) {
-            let lastHunt = huntsViewModel.slice(-1).pop()
-            console.log('load more', lastHunt.id)
-            if (lastHunt) {
-                setCursor(lastHunt.id)
+       
+            let cursor = paginationParams.cursor
+
+            if (paginationParams.cursor === 100000000) {
+                let firstHunt = huntsViewModel[0]
+                cursor = firstHunt.id + 1
             }
+            //reset to this value every 2 mins - show in UI like twitter toast (no. of posts, scroll up, etc...)
+            //if user clicks, set cursor to 100M again, load new posts
+            setPaginationParams({cursor:cursor,limit:((huntsViewModel.length)+10)})
         }
 
     })
@@ -139,7 +151,7 @@ export const HuntList: FunctionComponent = React.memo(() => {
                 <React.Fragment>
                     <HuntListContainer id="huntList">
                         {huntsViewModel.map((hunt,i) => { 
-                            return <div key = {hunt.id}>{hunt.id}<HuntListItem hunt={hunt} key={hunt.id}/></div>
+                            return <HuntListItem hunt={hunt} key={hunt.id}/>
                         })}
                     </HuntListContainer>
                 </React.Fragment>
