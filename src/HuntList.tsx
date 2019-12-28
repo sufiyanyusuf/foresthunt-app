@@ -15,6 +15,7 @@ export const HuntList: FunctionComponent = React.memo(() => {
     let currentUser = firebase.auth().currentUser
     const [userId, setUserId] = useState()
     const [cursor, setCursor] = useState(100000000)
+    const [huntsViewModel,setHuntsViewModel] = useState(Array<HuntModel>())
 
     useEffect(() => {
         if (currentUser) {
@@ -24,11 +25,6 @@ export const HuntList: FunctionComponent = React.memo(() => {
 
     useSubscription(huntsFeedSubsciption, {variables: { cursor: cursor }, onSubscriptionData:(data)=>updateModel(data)});
 
-    const [huntsViewModel,setHuntsViewModel] = useState([])
-    
-    const _subscribeToNewLinks = async () => {
-        // ... you'll implement this 🔜
-      }
 
     const updateModel = (data) => {
 
@@ -45,11 +41,65 @@ export const HuntList: FunctionComponent = React.memo(() => {
             return huntViewModel 
         })
 
-        //filter updated model to check for equality
-        
-        let newModel = huntsViewModel.concat(updatedHuntsViewModel)
-        
-        setHuntsViewModel(newModel)
+        console.log('outdated',huntsViewModel)
+        console.log('updatedmodel',updatedHuntsViewModel)
+
+        if (updatedHuntsViewModel.length > 0) {
+            //for empty model, set updated array
+            //model length is 0
+
+            if (huntsViewModel.length === 0) {
+                setHuntsViewModel(updatedHuntsViewModel)
+                return
+            }
+
+            //for new results at bottom, concat updated to model
+            //updated first element id is < model last element id
+
+            if (updatedHuntsViewModel[0].id < huntsViewModel[huntsViewModel.length - 1].id) {
+                setHuntsViewModel([...huntsViewModel, ...updatedHuntsViewModel])
+                return
+            }
+            
+
+            //for new results added on top, remove overlapping indices from model, then append to updated results
+            //updated first element id > model first element id
+            if (updatedHuntsViewModel[0].id > huntsViewModel[0].id) {
+
+                let _huntsViewModel: Array<HuntModel> = huntsViewModel.map(oldModel => {
+                    let newModel = updatedHuntsViewModel.filter(_model => { return _model.id === oldModel.id })
+                    if (newModel.length === 0) {
+                        return oldModel
+                    } else {
+                        return null
+                    }
+                }).filter(Boolean)
+
+                setHuntsViewModel(updatedHuntsViewModel.concat(_huntsViewModel))
+                return
+            }
+
+            //for updates, map and replace the updated element(s) in array
+            //updated first element id === model first element id
+            if (updatedHuntsViewModel[0].id === huntsViewModel[0].id) {
+
+                let _huntsViewModel: Array<HuntModel> = huntsViewModel.map((oldModel) => {
+                    
+                    let newModel = updatedHuntsViewModel.filter(_model => { return _model.id === oldModel.id })
+
+                    if (newModel.length === 1) {
+                        return newModel[0]
+                    } else {
+                        return oldModel
+                    }
+
+                })
+
+                setHuntsViewModel(_huntsViewModel)
+                return
+            }
+        }
+
     }
 
 
@@ -89,7 +139,7 @@ export const HuntList: FunctionComponent = React.memo(() => {
                 <React.Fragment>
                     <HuntListContainer id="huntList">
                         {huntsViewModel.map((hunt,i) => { 
-                            return <div>{hunt.id}<HuntListItem hunt={hunt} key={hunt.id}/></div>
+                            return <div key = {hunt.id}>{hunt.id}<HuntListItem hunt={hunt} key={hunt.id}/></div>
                         })}
                     </HuntListContainer>
                 </React.Fragment>
