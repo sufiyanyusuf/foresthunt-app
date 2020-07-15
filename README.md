@@ -1,6 +1,7 @@
-A simple app built in 2-3 weeks to share deals on shopping prices.
+Foresthunt was intended to be a crowdsourced price sharing platform, to build a community where everyone can save on shopping.
+A simple, realtime app was built in 2-3 weeks.
+
 Built using:
- - Hasura
- - Docker
+ - Hasura + GraphQL
  - Postgres
  - React (CRA)
